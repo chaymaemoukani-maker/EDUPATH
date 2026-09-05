@@ -7,15 +7,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Traits\HasRolesAndPermissions;
+
+class User extends Authenticatable implements LaratrustUser
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRolesAndPermissions;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role',
     ];
 
     protected $hidden = [

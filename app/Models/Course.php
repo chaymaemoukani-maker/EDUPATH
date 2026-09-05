@@ -18,6 +18,7 @@ class Course extends Model
         'description',
         'status',
         'published_at',
+        'image',
     ];
 
     protected $casts = [

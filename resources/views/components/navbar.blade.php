@@ -33,7 +33,6 @@
         $links = [
             ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard'],
             ['label' => 'Mes cours', 'url' => $url('instructor.courses.index'), 'route' => 'instructor.courses.index'],
-            ['label' => 'Apprenants', 'url' => $url('instructor.learners.index'), 'route' => 'instructor.learners.index'],
         ];
     } else {
         $links = [

@@ -6,15 +6,24 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'EduPath') }}@isset($pageTitle) — {{ $pageTitle }}@endisset</title>
+        @isset($metaDescription)<meta name="description" content="{{ $metaDescription }}">@endisset
+        @isset($canonical)<link rel="canonical" href="{{ $canonical }}">@endisset
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body x-data="{ sidebarOpen: false }" class="font-sans antialiased" style="background-color: #F8FAFC;">
+        <a
+            href="#main-content"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-indigo-700 focus:shadow-sm"
+        >
+            Aller au contenu
+        </a>
+
         {{-- Mobile top bar (hamburger opens the sidebar drawer) --}}
         <div class="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
             <button
@@ -87,7 +96,7 @@
         <div class="mx-auto flex max-w-7xl">
             <x-sidebar class="sticky top-16 hidden h-[calc(100vh-4rem)] md:flex" />
 
-            <main class="min-w-0 flex-1 px-4 py-8 sm:px-6 lg:px-8">
+            <main id="main-content" class="min-w-0 flex-1 px-4 py-8 sm:px-6 lg:px-8">
                 @isset($header)
                     <header class="mb-8">
                         {{ $header }}

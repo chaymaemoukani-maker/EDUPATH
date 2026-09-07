@@ -1,58 +1,113 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EduPath
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plateforme e-learning : un formateur crée des cours structurés en **sections → modules** (texte / vidéo / PDF), agrémentés d'un **quiz** optionnel par module. Un apprenant s'inscrit gratuitement, progresse module par module, passe les quiz et obtient un **certificat PDF vérifiable publiquement** à 100 % de progression. Un administrateur attribue les rôles, gère les catégories et **publie/dépublie** les cours.
 
-## About Laravel
+## Stack technique
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Composant | Version |
+|---|---|
+| Backend | Laravel 13, PHP ^8.3 |
+| Frontend | Blade + Tailwind CSS v3 + Alpine.js (pas de framework JS) |
+| Base de données | MySQL 8.0 |
+| Rôles / permissions | Laratrust ^8.5 (source de vérité unique : `admin` / `instructor` / `learner`) |
+| PDF | barryvdh/laravel-dompdf |
+| Tests | Pest ^4 |
+| Conteneurisation | Docker Compose (app + nginx + mysql) |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Prérequis
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP ^8.3 avec les extensions `pdo_mysql`, `mbstring`, `exif`, `bcmath`, `gd`, `zip`, `intl`
+- Composer 2
+- Node.js 20.19+ / 22+ et npm
+- Docker Desktop (recommandé) **ou** un serveur MySQL 8.0 local
 
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Installation avec Docker (recommandé)
 
 ```bash
-composer require laravel/boost --dev
+composer install
+npm install
+npm run build
 
-php artisan boost:install
+cp .env.example .env
+php artisan key:generate
+
+docker compose up -d --build
+
+# Les commandes artisan qui touchent la base s'exécutent DANS le conteneur `app`
+# (le réseau Docker ne connaît le hostname `db` que depuis l'intérieur du réseau).
+docker compose exec app php artisan storage:link
+docker compose exec app php artisan migrate:fresh --seed
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+L'application est alors disponible sur http://localhost:8000. Les conteneurs `web` (nginx) et `app` (php-fpm) montent le dossier du projet (`./:/var/www/html`) ; la base MySQL est exposée sur le port hôte 3306 avec les identifiants de `.env` (`DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, root par défaut `root_secret`).
 
-## Contributing
+> Testée en SQLite en mémoire (`php artisan test`) et exécutée avec MySQL via Docker (`.env.example` : `DB_HOST=db`). Les commandes artisan `php artisan migrate:...` / `db:seed` s'exécutent donc **dans** le conteneur (`docker compose exec app php artisan ...`). Pour un développement sans Docker, mettez `DB_HOST=127.0.0.1` dans `.env` et utilisez un serveur MySQL local.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Installation locale (sans Docker)
 
-## Code of Conduct
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+# configurez .env : DB_HOST=127.0.0.1, DB_DATABASE, DB_USERNAME, DB_PASSWORD (MySQL 8)
+npm install
+npm run build
+php artisan migrate --seed
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Comptes de démonstration
 
-## Security Vulnerabilities
+`php artisan db:seed --class=DemoDataSeeder` (inclus dans `migrate:fresh --seed`) crée des données de démonstration. Tous les comptes utilisent le mot de passe **`password`** (⚠️ à changer en production) :
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Rôle | Email |
+|---|---|
+| Admin | `admin@example.com` |
+| Formateur | `instructor@example.com`, `sophie.martin@example.com`, `karim.benali@example.com` |
+| Apprenant | `learner@example.com`, `lea.dubois@example.com`, `hugo.lefevre@example.com`, `ines.moreau@example.com` |
 
-## License
+Les données seedées couvrent tous les états métier utiles à la démo : cours en brouillon, cours publiés, inscriptions, progression à 50 %, progression à 100 % avec certificat, et un quiz complet avec une tentative réussie.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Commandes utiles
+
+```bash
+# Suite de tests (Pest, SQLite en mémoire)
+php artisan test
+
+# Lint PHP (Pint)
+vendor/bin/pint --test
+
+# Build des assets frontend
+npm run build       # production
+npm run dev         # développement (Vite)
+
+# Contrôles
+php artisan route:list
+php artisan view:cache
+php artisan db:show
+```
+
+## CI / GitHub Actions
+
+Un pipeline `.github/workflows/tests.yml` s'exécute sur chaque push / pull request vers `main`/`master` : PHP 8.3, Composer, Node.js 22, `npm ci` + `npm run build`, puis la suite Pest complète en SQLite en mémoire.
+
+## Sécurité
+
+- Roles et permissions via Laratrust : aucun sélecteur de rôle en self-service ; le rôle est toujours résolu côté serveur.
+- Publication d'un cours **réservée à l'administrateur** (Policies Laravel).
+- Protection CSRF sur tous les formulaires, validation via FormRequest, uploads PDF validés (`mimes:pdf`, taille limitée).
+- Rate limiting : inscription et vérification de certificat throttlées, connexion limitée.
+
+## Documentation du projet
+
+Toutes les décisions, le cahier des charges, la structure de la base de données, le design system et le backlog sont documentés dans `specs/` et `AGENTS.md` :
+
+- `specs/cahier-des-charges.md` — exigences fonctionnelles
+- `specs/database.md` — schéma et migrations
+- `specs/design.md` — design system et pages
+- `specs/fonctionnalites.md` — fonctionnalités par rôle
+- `specs/backlog.md` — backlog EPIC → Feature → Task
+
+## Licence
+
+Projet pédagogique — Établissement de formation, 2026.

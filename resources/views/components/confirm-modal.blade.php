@@ -25,6 +25,9 @@
     style="display: none;"
     role="dialog"
     aria-modal="true"
+    @if ($title)
+        aria-labelledby="{{ $name }}-title"
+    @endif
 >
     <div
         x-show="show"
@@ -50,7 +53,7 @@
     >
         @if ($title)
             <div class="border-b border-slate-100 px-6 py-4">
-                <h3 class="text-base font-semibold text-slate-900">{{ $title }}</h3>
+                <h3 id="{{ $name }}-title" class="text-base font-semibold text-slate-900">{{ $title }}</h3>
             </div>
         @endif
         <div class="px-6 py-5">

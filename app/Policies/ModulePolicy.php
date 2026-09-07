@@ -45,4 +45,11 @@ class ModulePolicy
             && $module->section->course
             && $module->section->course->instructor_id === $user->id;
     }
+
+    public function learn(User $user, Module $module): bool
+    {
+        return $module->section
+            && $module->section->course
+            && $module->section->course->enrollments()->where('user_id', $user->id)->exists();
+    }
 }

@@ -52,4 +52,15 @@ class CoursePolicy
     {
         return $user->hasRole('admin');
     }
+
+    public function enroll(User $user, Course $course): bool
+    {
+        return $course->status === 'published'
+            && ! $course->enrollments()->where('user_id', $user->id)->exists();
+    }
+
+    public function learn(User $user, Course $course): bool
+    {
+        return $course->enrollments()->where('user_id', $user->id)->exists();
+    }
 }

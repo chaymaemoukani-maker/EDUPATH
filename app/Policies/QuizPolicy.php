@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Quiz;
 use App\Models\User;
+use App\Services\QuizAttemptService;
 
 class QuizPolicy
 {
@@ -46,5 +47,17 @@ class QuizPolicy
             && $quiz->module->section
             && $quiz->module->section->course
             && $quiz->module->section->course->instructor_id === $user->id;
+    }
+
+    public function take(User $user, Quiz $quiz): bool
+    {
+        if (! $quiz->module || ! $quiz->module->section || ! $quiz->module->section->course) {
+            return false;
+        }
+
+        $course = $quiz->module->section->course;
+
+        return $course->enrollments()->where('user_id', $user->id)->exists()
+            && app(QuizAttemptService::class)->canAttempt($user, $quiz);
     }
 }

@@ -17,7 +17,14 @@
             <span class="text-xs font-semibold text-slate-700">{{ $clamped }}%</span>
         </div>
     @endif
-    <div class="{{ $height }} w-full overflow-hidden rounded-full bg-slate-200">
+    <div
+        role="progressbar"
+        aria-label="{{ $showLabel ? 'Progression' : 'Progression du cours' }}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="{{ $clamped }}"
+        class="{{ $height }} w-full overflow-hidden rounded-full bg-slate-200"
+    >
         <div class="{{ $color }} h-full rounded-full transition-all duration-300" style="width: {{ $clamped }}%"></div>
     </div>
 </div>

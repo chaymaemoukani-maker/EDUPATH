@@ -20,7 +20,6 @@
             $roleItems = [
                 ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard', 'icon' => 'dashboard'],
                 ['label' => 'Mes cours', 'url' => $url('instructor.courses.index'), 'route' => 'instructor.courses.index', 'icon' => 'course'],
-                ['label' => 'Apprenants', 'url' => $url('instructor.learners.index'), 'route' => 'instructor.learners.index', 'icon' => 'users'],
                 ['label' => 'Profil', 'url' => $url('profile.edit'), 'route' => 'profile.edit', 'icon' => 'profile'],
             ];
         } else {

@@ -1,0 +1,301 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Answer;
+use App\Models\Category;
+use App\Models\Certificate;
+use App\Models\Course;
+use App\Models\Enrollment;
+use App\Models\Module;
+use App\Models\Progress;
+use App\Models\Question;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
+use App\Models\Section;
+use App\Models\User;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+/**
+ * Seeds a realistic, French-speaking demo dataset covering the learning paths A–F:
+ * A) instructor draft course, B) admin-published course, C) enrolled learner,
+ * D) partial progression, E) 100% completion + certificate, F) rich multi-question quiz.
+ *
+ * Constraints respected: no course rating, no certificate score, no "quiz" module type,
+ * courses only ever pass to "published" as the admin does it, Laratrust is the sole role source.
+ */
+class DemoDataSeeder extends Seeder
+{
+    use WithoutModelEvents;
+
+    public function run(): void
+    {
+        $admin = $this->user('Admin EduPath', 'admin@example.com', 'admin');
+        $this->user('Instructor Demo', 'instructor@example.com', 'instructor');
+
+        $sophie = $this->user('Sophie Martin', 'sophie.martin@example.com', 'instructor');
+        $karim = $this->user('Karim Benali', 'karim.benali@example.com', 'instructor');
+
+        $lea = $this->user('Léa Dubois', 'lea.dubois@example.com', 'learner');
+        $hugo = $this->user('Hugo Lefèvre', 'hugo.lefevre@example.com', 'learner');
+        $ines = $this->user('Inès Moreau', 'ines.moreau@example.com', 'learner');
+
+        $categories = [
+            'developpement-web' => ['name' => 'Développement Web'],
+            'design-graphique' => ['name' => 'Design Graphique'],
+            'marketing-digital' => ['name' => 'Marketing Digital'],
+            'data-ia' => ['name' => 'Data & IA'],
+        ];
+
+        foreach ($categories as $slug => $props) {
+            Category::firstOrCreate(['slug' => $slug], $props);
+        }
+
+        $web = Category::where('slug', 'developpement-web')->first();
+        $design = Category::where('slug', 'design-graphique')->first();
+        $marketing = Category::where('slug', 'marketing-digital')->first();
+
+        // ------------------------------------------------------------------
+        // A) Instructor draft course (never published by its owner).
+        // ------------------------------------------------------------------
+        $draft = $this->course($sophie, $web, 'Introduction à PHP 8', 'draft', [
+            $this->section('Les bases', [
+                $this->module('Syntaxe et variables', 'text', "PHP 8 est un langage de script côté serveur.\n\nLes variables commencent par le symbole \$ et ne sont pas typées au déclaration, mais l'usage est fortement recommandé."),
+                $this->module('Les conditions', 'text', "if / else, switch, et l'opérateur ternaire permettent de brancher la logique.\n\nPensez à toujours couvrir le cas par défaut."),
+            ]),
+            $this->section('Aller plus loin', [
+                $this->module('Les fonctions', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+            ]),
+        ]);
+
+        // ------------------------------------------------------------------
+        // B) Admin-published course, rich content + quiz (scenario F shares this quiz).
+        // ------------------------------------------------------------------
+        $laravel = $this->course($karim, $web, 'Maîtriser Laravel 12', 'published', [
+            $this->section('Démarrage', [
+                $this->module('Installation', 'text', "Installation de Laravel via Composer :\n\n   composer create-project laravel/laravel mon-app\n\nPuis vérifiez que la commande artisan répond : php artisan --version."),
+                $this->module('Architecture MVC', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+                $this->module('Premières routes', 'text', "Les routes vivent dans routes/web.php.\n\nRoute::get('/hello', fn () => 'Bonjour'); suffit pour une première réponse HTTP."),
+            ]),
+            $this->section('Modèles et base de données', [
+                $this->module('Eloquent et migrations', 'text', "Les migrations décrivent le schéma, Eloquent manipule les données.\n\nphp artisan make:model Article -m crée le modèle et sa migration en une commande."),
+                $this->module('Relations', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+                $this->module('Guide pratique', 'pdf', 'modules/laravel-guide-pratique.pdf'),
+                $this->module('Quiz de validation', 'text', "Validez vos connaissances avec le quiz ci-dessous avant de passer à la suite."),
+            ]),
+        ]);
+
+        $this->attachQuiz($laravel, 'Quiz — Laravel 12', 60, 3, [
+            ['Quel fichier définit les routes web ?', ['routes/web.php', 'routes/api.php', 'app/Http/web.php', 'config/web.php'], 0],
+            ['Quelle commande applique les migrations ?', ['php artisan migrate', 'php artisan schema', 'composer migrate', 'npm run migrate'], 0],
+            ['Quelle classe permet d\'interagir avec une table ?', ['Eloquent Model', 'Blade Component', 'Middleware', 'Service Provider'], 0],
+            ['Quel langage alimente les vues Blade ?', ['PHP', 'JavaScript', 'Python', 'Ruby'], 0],
+            ['Quel est l\'utilitaire officiel de gestion de dépendances ?', ['Composer', 'npm', 'Yarn', 'Pip'], 0],
+        ]);
+
+        // ------------------------------------------------------------------
+        // C) Enrolled learner (no progress yet) on the published Laravel course.
+        // ------------------------------------------------------------------
+        $this->enroll($lea, $laravel);
+
+        // ------------------------------------------------------------------
+        // D) Partial progression (~50%) on the Design course.
+        // ------------------------------------------------------------------
+        $designCourse = $this->course($sophie, $design, 'Design UX/UI : les fondamentaux', 'published', [
+            $this->section('Concevoir', [
+                $this->module('Couleurs et contraste', 'text', "La couleur guide le regard. Respectez un contraste AA minimum entre texte et fond pour rester accessible."),
+                $this->module('Typographie', 'text', "Une hiérarchie claire (titres, sous-titres, corps) rend la lecture confortable. Limitez-vous à deux familles."),
+            ]),
+            $this->section('Prototyper', [
+                $this->module('Wireframes', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+                $this->module('Tests utilisateurs', 'pdf', 'modules/guides-tests-utilisateurs.pdf'),
+            ]),
+        ]);
+
+        $this->enroll($hugo, $designCourse);
+
+        $designSections = $designCourse->sections()->orderBy('order')->get();
+        $firstHalf = $designSections->first()->modules()->orderBy('order')->get();
+        foreach ($firstHalf as $module) {
+            Progress::firstOrCreate([
+                'user_id' => $hugo->id,
+                'module_id' => $module->id,
+            ], ['completed_at' => now()]);
+        }
+
+        // ------------------------------------------------------------------
+        // E) 100% completion → certificate (no score anywhere on the certificate).
+        // ------------------------------------------------------------------
+        $marketingCourse = $this->course($karim, $marketing, 'Marketing Digital 101', 'published', [
+            $this->section('Stratégie', [
+                $this->module('Définir ses personas', 'text', "Un persona est une représentation semi-fictive de votre client idéal, fondée sur des données réelles."),
+                $this->module('Analyser le marché', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+            ]),
+            $this->section('Acquisition', [
+                $this->module('SEO et contenu', 'text', "Le référencement naturel repose sur du contenu utile, une technique saine et des backlinks qualitatifs."),
+                $this->module('Quiz — Marketing Digital', 'text', "Dernière étape : passez le quiz pour valider le module."),
+            ]),
+        ]);
+
+        $this->attachQuiz($marketingCourse, 'Quiz — Marketing Digital', 60, 3, [
+            ['Qu\'est-ce qu\'un persona ?', ['Une représentation du client idéal', 'Un logo', 'Un fichier marketing', 'Une campagne payante'], 0],
+            ['Que signifie SEO ?', ['Search Engine Optimization', 'Social Engine Online', 'Site Enhancement Order', 'Simple Email Output'], 0],
+        ]);
+
+        $this->enroll($ines, $marketingCourse);
+
+        foreach ($marketingCourse->sections()->orderBy('order')->get() as $section) {
+            foreach ($section->modules()->orderBy('order')->get() as $module) {
+                Progress::firstOrCreate([
+                    'user_id' => $ines->id,
+                    'module_id' => $module->id,
+                ], ['completed_at' => now()]);
+            }
+        }
+
+        $certificate = $this->certificate($ines, $marketingCourse);
+
+        $quizMarketing = $marketingCourse->sections()
+            ->orderBy('order')->get()
+            ->last()->modules()->orderBy('order')->get()
+            ->last()
+            ->quiz;
+
+        if ($quizMarketing) {
+            QuizAttempt::firstOrCreate([
+                'user_id' => $ines->id,
+                'quiz_id' => $quizMarketing->id,
+            ], [
+                'score' => 100,
+                'passed' => true,
+                'attempted_at' => now(),
+            ]);
+        }
+
+        // ------------------------------------------------------------------
+        // F) The Laravel quiz above already carries 5 questions x 4 answers.
+        // The QuizAttempt against quizzes_id is satisfied by the module quiz.
+        // ------------------------------------------------------------------
+
+        $this->command?->info('DemoDataSeeder terminé (draft, published, enrollment, progression 50%, 100% + certificat, quiz complet).');
+    }
+
+    // ----- Helpers ---------------------------------------------------------
+
+    private function user(string $name, string $email, string $role): User
+    {
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            ['name' => $name, 'password' => Hash::make('password')]
+        );
+
+        if (! $user->hasRole($role)) {
+            $user->addRole($role);
+        }
+
+        return $user;
+    }
+
+    private function course(User $instructor, Category $category, string $title, string $status, array $sections): Course
+    {
+        $course = Course::firstOrCreate(
+            ['title' => $title],
+            [
+                'instructor_id' => $instructor->id,
+                'category_id' => $category->id,
+                'description' => fake()->realTextBetween(120, 220),
+                'status' => $status,
+                'published_at' => $status === 'published' ? now() : null,
+            ]
+        );
+
+        $course->sections()->delete();
+
+        $order = 1;
+        foreach ($sections as $section) {
+            $courseSection = Section::create([
+                'course_id' => $course->id,
+                'title' => $section['title'],
+                'order' => $order++,
+            ]);
+
+            $moduleOrder = 1;
+            foreach ($section['modules'] as $module) {
+                Module::create([
+                    'section_id' => $courseSection->id,
+                    'title' => $module['title'],
+                    'type' => $module['type'],
+                    'content' => $module['content'],
+                    'order' => $moduleOrder++,
+                ]);
+            }
+        }
+
+        return $course;
+    }
+
+    private function section(string $title, array $modules): array
+    {
+        return ['title' => $title, 'modules' => $modules];
+    }
+
+    private function module(string $title, string $type, string $content): array
+    {
+        return ['title' => $title, 'type' => $type, 'content' => $content];
+    }
+
+    private function attachQuiz(Course $course, string $title, int $passScore, int $maxAttempts, array $questions): Quiz
+    {
+        $section = $course->sections()->orderBy('order')->get()->last();
+        $module = $section->modules()->orderBy('order')->get()->last();
+
+        $quiz = Quiz::create([
+            'module_id' => $module->id,
+            'title' => $title,
+            'pass_score' => $passScore,
+            'max_attempts' => $maxAttempts,
+        ]);
+
+        foreach ($questions as [$text, $answers, $correctIndex]) {
+            $question = Question::create(['quiz_id' => $quiz->id, 'text' => $text]);
+
+            foreach ($answers as $index => $answerText) {
+                Answer::create([
+                    'question_id' => $question->id,
+                    'text' => $answerText,
+                    'is_correct' => $index === $correctIndex,
+                ]);
+            }
+        }
+
+        return $quiz;
+    }
+
+    private function enroll(User $user, Course $course): Enrollment
+    {
+        return Enrollment::firstOrCreate([
+            'user_id' => $user->id,
+            'course_id' => $course->id,
+        ], ['enrolled_at' => now()]);
+    }
+
+    private function certificate(User $user, Course $course): Certificate
+    {
+        do {
+            $code = strtoupper(Str::random(12));
+        } while (Certificate::where('unique_code', $code)->exists());
+
+        Enrollment::where('user_id', $user->id)
+            ->where('course_id', $course->id)
+            ->whereNull('completed_at')
+            ->update(['completed_at' => now()]);
+
+        return Certificate::firstOrCreate(
+            ['user_id' => $user->id, 'course_id' => $course->id],
+            ['unique_code' => $code, 'issued_at' => now()]
+        );
+    }
+}

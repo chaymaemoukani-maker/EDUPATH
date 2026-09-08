@@ -17,6 +17,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -33,6 +34,7 @@ class DemoDataSeeder extends Seeder
 
     public function run(): void
     {
+        $this->makeDemoPdfs();
         $admin = $this->user('Admin EduPath', 'admin@example.com', 'admin');
         $this->user('Instructor Demo', 'instructor@example.com', 'instructor');
 
@@ -209,6 +211,12 @@ class DemoDataSeeder extends Seeder
                 'description' => fake()->realTextBetween(120, 220),
                 'status' => $status,
                 'published_at' => $status === 'published' ? now() : null,
+                'image' => match ($title) {
+                    'Maîtriser Laravel 12' => '/images/courses/laravel.svg',
+                    'Design UX/UI : les fondamentaux' => '/images/courses/design-ux.svg',
+                    'Marketing Digital 101' => '/images/courses/marketing.svg',
+                    default => null,
+                },
             ]
         );
 
@@ -297,5 +305,35 @@ class DemoDataSeeder extends Seeder
             ['user_id' => $user->id, 'course_id' => $course->id],
             ['unique_code' => $code, 'issued_at' => now()]
         );
+    }
+
+    /**
+     * Writes the demo PDF module files referenced by the seeded courses so the
+     * learner module page links ("Ouvrir le PDF") never point to a 404.
+     */
+    private function makeDemoPdfs(): void
+    {
+        $disk = Storage::disk('public');
+        $files = [
+            'modules/guide-pratique-laravel.pdf' => "Guide pratique Laravel 12" . PHP_EOL . PHP_EOL .
+                "Introduction aux routes, controllers, Blade et Eloquent." . PHP_EOL .
+                "Ce document est fourni à titre de démonstration pour EduPath." . PHP_EOL,
+            'modules/guides-tests-utilisateurs.pdf' => "Guide des tests utilisateurs" . PHP_EOL . PHP_EOL .
+                "Cadrage, scénarios, recueil des retours et itérations." . PHP_EOL .
+                "Document de démonstration EduPath." . PHP_EOL,
+        ];
+
+        foreach ($files as $path => $text) {
+            if ($disk->exists($path)) {
+                continue;
+            }
+            $disk->put($path, "%PDF-1.4" . PHP_EOL . "% EduPath" . PHP_EOL . "%E%E%E%E" . PHP_EOL .
+                "1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj" . PHP_EOL .
+                "2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj" . PHP_EOL .
+                "3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Contents 4 0 R/Resources<</Font<</F1 5 0 R>>>>>>endobj" . PHP_EOL .
+                "4 0 obj<</Length " . strlen($text) . ">>stream" . PHP_EOL . $text . "endstreamendobj" . PHP_EOL .
+                "5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj" . PHP_EOL .
+                "trailer<</Root 1 0 R>>" . PHP_EOL . "%%EOF" . PHP_EOL);
+        }
     }
 }

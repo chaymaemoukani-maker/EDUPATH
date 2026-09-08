@@ -111,7 +111,7 @@
                             {{ __('Profil') }}
                         </x-dropdown-link>
 
-                        <form method="POST" action="{{ $url('logout') }}" class="md:hidden">
+                        <form method="POST" action="{{ $url('logout') }}">
                             @csrf
                             <x-dropdown-link :href="$url('logout')"
                                 onclick="event.preventDefault(); this.closest('form').submit();"

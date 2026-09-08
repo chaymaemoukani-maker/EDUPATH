@@ -41,7 +41,11 @@ class CourseFactory extends Factory
     public function withImage(): static
     {
         return $this->state(fn (array $attributes) => [
-            'image' => fake()->imageUrl(640, 360, 'education', true),
+            'image' => fake()->randomElement([
+                '/images/courses/laravel.svg',
+                '/images/courses/design-ux.svg',
+                '/images/courses/marketing.svg',
+            ]),
         ]);
     }
 }

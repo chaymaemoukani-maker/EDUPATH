@@ -40,7 +40,7 @@
                 <video class="aspect-video w-full rounded-xl" controls src="{{ $videoContent }}"></video>
             @endif
         @elseif ($module->type === 'pdf')
-            <x-button href="{{ $module->content }}" variant="secondary" target="_blank">Ouvrir le PDF</x-button>
+            <x-button href="{{ asset('storage/' . $module->content) }}" variant="secondary" target="_blank">Ouvrir le PDF</x-button>
             <p class="mt-2 text-xs text-slate-400">Le PDF s'ouvrira dans un nouvel onglet.</p>
         @endif
     </div>

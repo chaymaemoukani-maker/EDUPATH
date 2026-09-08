@@ -338,13 +338,13 @@ test('learner dashboard shows the enrolled courses and progression', function ()
     Enrollment::factory()->create(['user_id' => $this->learner->id, 'course_id' => $course->id]);
 
     $this->actingAs($this->learner)
-        ->get(route('dashboard'))
+        ->get(route('learner.dashboard'))
         ->assertOk()
         ->assertSee('Cours en cours')
         ->assertSee($course->title);
 
     $this->actingAs($this->otherLearner)
-        ->get(route('dashboard'))
+        ->get(route('learner.dashboard'))
         ->assertOk()
         ->assertSee('Cours inscrits');
 });

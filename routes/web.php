@@ -9,11 +9,14 @@ use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Instructor\CourseController;
+use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Instructor\LearnerController as InstructorLearnerController;
 use App\Http\Controllers\Instructor\ModuleController;
 use App\Http\Controllers\Instructor\QuizController;
 use App\Http\Controllers\Instructor\SectionController;
 use App\Http\Controllers\Learner\CertificateController as LearnerCertificateController;
 use App\Http\Controllers\Learner\CourseController as LearnerCourseController;
+use App\Http\Controllers\Learner\DashboardController as LearnerDashboardController;
 use App\Http\Controllers\Learner\EnrollmentController;
 use App\Http\Controllers\Learner\ModuleController as LearnerModuleController;
 use App\Http\Controllers\Learner\ProgressController;
@@ -56,6 +59,10 @@ Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('ad
  * Instructor space — role:instructor. Course publication is never exposed here.
  */
 Route::middleware(['auth', 'verified', 'role:instructor'])->prefix('instructor')->name('instructor.')->group(function () {
+    Route::get('/dashboard', [InstructorDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/learners', [InstructorLearnerController::class, 'index'])->name('learners.index');
+
     Route::resource('courses', CourseController::class)
         ->except(['show'])
         ->names('courses');
@@ -89,6 +96,8 @@ Route::get('/verify', [CertificateController::class, 'verify'])
  * Learner space — role:learner (Laratrust). Enrollment, progression, quizzes, certificates.
  */
 Route::middleware(['auth', 'verified', 'role:learner'])->prefix('learner')->name('learner.')->group(function () {
+    Route::get('/dashboard', [LearnerDashboardController::class, 'index'])->name('dashboard');
+
     Route::get('/courses', [LearnerCourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{course}', [LearnerCourseController::class, 'show'])->name('courses.show');
     Route::post('/courses/{course}/enroll', [EnrollmentController::class, 'store'])->name('enrollments.store');

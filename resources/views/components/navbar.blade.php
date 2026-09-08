@@ -24,19 +24,20 @@
         ];
     } elseif (Auth::user()->hasRole('admin')) {
         $links = [
-            ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard'],
+            ['label' => 'Dashboard', 'url' => $url('admin.dashboard'), 'route' => 'admin.dashboard'],
             ['label' => 'Utilisateurs', 'url' => $url('admin.users.index'), 'route' => 'admin.users.index'],
             ['label' => 'Catégories', 'url' => $url('admin.categories.index'), 'route' => 'admin.categories.index'],
             ['label' => 'Cours', 'url' => $url('admin.courses.index'), 'route' => 'admin.courses.index'],
         ];
     } elseif (Auth::user()->hasRole('instructor')) {
         $links = [
-            ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard'],
+            ['label' => 'Dashboard', 'url' => $url('instructor.dashboard'), 'route' => 'instructor.dashboard'],
             ['label' => 'Mes cours', 'url' => $url('instructor.courses.index'), 'route' => 'instructor.courses.index'],
+            ['label' => 'Apprenants', 'url' => $url('instructor.learners.index'), 'route' => 'instructor.learners.index'],
         ];
     } else {
         $links = [
-            ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard'],
+            ['label' => 'Dashboard', 'url' => $url('learner.dashboard'), 'route' => 'learner.dashboard'],
             ['label' => 'Mes cours', 'url' => $url('learner.courses.index'), 'route' => 'learner.courses.index'],
             ['label' => 'Catalogue', 'url' => $url('catalog'), 'route' => 'catalog'],
         ];

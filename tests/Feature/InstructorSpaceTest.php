@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\Module;
 use App\Models\Quiz;
 use App\Models\Section;
@@ -28,6 +29,10 @@ test('learner cannot access the instructor space', function () {
 
     $this->actingAs($learner)
         ->get(route('instructor.courses.index'))
+        ->assertForbidden();
+
+    $this->actingAs($learner)
+        ->get(route('instructor.learners.index'))
         ->assertForbidden();
 });
 
@@ -235,4 +240,46 @@ test('quiz validation rejects an out-of-range correct answer index', function ()
         ->assertSessionHasErrors('questions.0.correct_answer');
 
     expect(Quiz::where('module_id', $module->id)->exists())->toBeFalse();
+});
+
+test('instructor can view the learners enrolled in their own courses', function () {
+    $course = Course::factory()->create(['instructor_id' => $this->instructor->id]);
+
+    $learner = User::factory()->create();
+    $learner->addRole('learner');
+    Enrollment::factory()->create(['user_id' => $learner->id, 'course_id' => $course->id]);
+
+    $this->actingAs($this->instructor)
+        ->get(route('instructor.learners.index'))
+        ->assertOk()
+        ->assertSee('Apprenants inscrits')
+        ->assertSee($learner->name)
+        ->assertSee($learner->email)
+        ->assertSee($course->title);
+});
+
+test('instructor cannot see learners enrolled in another instructor courses', function () {
+    $other = User::factory()->create();
+    $other->addRole('instructor');
+    $otherCourse = Course::factory()->create(['instructor_id' => $other->id]);
+
+    $learner = User::factory()->create();
+    $learner->addRole('learner');
+    Enrollment::factory()->create(['user_id' => $learner->id, 'course_id' => $otherCourse->id]);
+
+    $this->actingAs($this->instructor)
+        ->get(route('instructor.learners.index'))
+        ->assertOk()
+        ->assertDontSee($learner->name)
+        ->assertDontSee($learner->email);
+});
+
+test('instructor cannot filter the learners page by a course they do not own', function () {
+    $other = User::factory()->create();
+    $other->addRole('instructor');
+    $otherCourse = Course::factory()->create(['instructor_id' => $other->id]);
+
+    $this->actingAs($this->instructor)
+        ->get(route('instructor.learners.index', ['course' => $otherCourse->id]))
+        ->assertForbidden();
 });

@@ -10,7 +10,7 @@
     if (Auth::check()) {
         if (Auth::user()->hasRole('admin')) {
             $roleItems = [
-                ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard', 'icon' => 'dashboard'],
+                ['label' => 'Dashboard', 'url' => $url('admin.dashboard'), 'route' => 'admin.dashboard', 'icon' => 'dashboard'],
                 ['label' => 'Utilisateurs', 'url' => $url('admin.users.index'), 'route' => 'admin.users.index', 'icon' => 'users'],
                 ['label' => 'Catégories', 'url' => $url('admin.categories.index'), 'route' => 'admin.categories.index', 'icon' => 'category'],
                 ['label' => 'Cours', 'url' => $url('admin.courses.index'), 'route' => 'admin.courses.index', 'icon' => 'course'],
@@ -18,13 +18,14 @@
             ];
         } elseif (Auth::user()->hasRole('instructor')) {
             $roleItems = [
-                ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard', 'icon' => 'dashboard'],
+                ['label' => 'Dashboard', 'url' => $url('instructor.dashboard'), 'route' => 'instructor.dashboard', 'icon' => 'dashboard'],
                 ['label' => 'Mes cours', 'url' => $url('instructor.courses.index'), 'route' => 'instructor.courses.index', 'icon' => 'course'],
+                ['label' => 'Apprenants', 'url' => $url('instructor.learners.index'), 'route' => 'instructor.learners.index', 'icon' => 'users'],
                 ['label' => 'Profil', 'url' => $url('profile.edit'), 'route' => 'profile.edit', 'icon' => 'profile'],
             ];
         } else {
             $roleItems = [
-                ['label' => 'Dashboard', 'url' => $url('dashboard'), 'route' => 'dashboard', 'icon' => 'dashboard'],
+                ['label' => 'Dashboard', 'url' => $url('learner.dashboard'), 'route' => 'learner.dashboard', 'icon' => 'dashboard'],
                 ['label' => 'Mes cours', 'url' => $url('learner.courses.index'), 'route' => 'learner.courses.index', 'icon' => 'course'],
                 ['label' => 'Certificats', 'url' => $url('learner.certificates.index'), 'route' => 'learner.certificates.index', 'icon' => 'certificate'],
                 ['label' => 'Profil', 'url' => $url('profile.edit'), 'route' => 'profile.edit', 'icon' => 'profile'],

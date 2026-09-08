@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ProgressService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
     /**
-     * Role-aware dashboard. Admin and instructor are redirected to their
-     * dedicated space; learners get a personalised learning dashboard.
+     * Role-aware dashboard entry point. Each role is redirected to its
+     * dedicated dashboard space.
      */
-    public function index(Request $request): View|RedirectResponse
+    public function index(Request $request): RedirectResponse
     {
         $user = $request->user();
 
@@ -22,30 +20,9 @@ class DashboardController extends Controller
         }
 
         if ($user->hasRole('instructor')) {
-            return redirect()->route('instructor.courses.index');
+            return redirect()->route('instructor.dashboard');
         }
 
-        $progress = app(ProgressService::class);
-
-        $courses = $user->enrollments()
-            ->with(['course.category', 'course.instructor', 'course.sections.modules'])
-            ->latest('enrolled_at')
-            ->get()
-            ->map(fn ($enrollment) => (object) [
-                'course' => $enrollment->course,
-                'completed_at' => $enrollment->completed_at,
-                'percent' => $progress->percent($user, $enrollment->course),
-            ]);
-
-        $inProgress = $courses->filter(fn ($item) => $item->percent < 100);
-        $completed = $courses->filter(fn ($item) => $item->percent >= 100);
-        $certificates = $user->certificates()->with('course.instructor')->latest('issued_at')->get();
-
-        return view('dashboard', [
-            'courses' => $courses,
-            'inProgress' => $inProgress,
-            'completed' => $completed,
-            'certificates' => $certificates,
-        ]);
+        return redirect()->route('learner.dashboard');
     }
 }

@@ -89,7 +89,13 @@ php artisan db:show
 
 ## CI / GitHub Actions
 
-Un pipeline `.github/workflows/tests.yml` s'exécute sur chaque push / pull request vers `main`/`master` : PHP 8.3, Composer, Node.js 22, `npm ci` + `npm run build`, puis la suite Pest complète en SQLite en mémoire.
+Un pipeline `.github/workflows/tests.yml` s'exécute sur chaque push / pull request vers `main`/`master` (déclenchement manuel possible via `workflow_dispatch`) :
+
+1. **Tests** — Pest (PHP 8.3, Composer, Node 22, `npm ci` + `npm run build`) en matrice **SQLite + MySQL** (service MySQL 8.0 jetable), plus le gate de formatage **Pint** (`vendor/bin/pint --test`).
+2. **Docker** — build des images `app` (Laravel autonome, sans bind mounts) puis `web` (nginx).
+3. **Publication** — sur chaque push vers `main`, les images sont taguées `<sha>` + `latest` et poussées sur **GHCR** : `ghcr.io/<compte>/edupath` et `ghcr.io/<compte>/edupath-web`.
+
+La config de style (exclusions des fichiers métier hérités) est centralisée dans `pint.json`.
 
 ## Sécurité
 

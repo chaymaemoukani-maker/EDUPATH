@@ -1,17 +1,45 @@
-name: Tests
+name: CI
 
 on:
   push:
     branches: [ main, master ]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   tests:
+    name: Tests (${{ matrix.database }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     strategy:
+      fail-fast: false
       matrix:
         php: [ '8.3' ]
+        database: [ sqlite, mysql ]
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: edupath_test
+          MYSQL_USER: edupath_user
+          MYSQL_PASSWORD: edupath_password
+          MYSQL_ROOT_PASSWORD: root_secret
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout
@@ -21,7 +49,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, gd
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, pdo_mysql, bcmath, gd
           coverage: none
 
       - name: Get Composer cache directory
@@ -55,8 +83,72 @@ jobs:
           cp .env.example .env
           php artisan key:generate
 
-      - name: Run test suite
+      - name: Run PHP code style check (Pint)
+        run: vendor/bin/pint --test
+
+      - name: Run test suite (${{ matrix.database }})
         env:
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
+          DB_CONNECTION: ${{ matrix.database == 'mysql' && 'mysql' || 'sqlite' }}
+          DB_DATABASE: ${{ matrix.database == 'mysql' && 'edupath_test' || ':memory:' }}
+          DB_HOST: ${{ matrix.database == 'mysql' && '127.0.0.1' || 'db' }}
         run: php artisan test
+
+  docker:
+    name: Docker build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build app image (autonomous Laravel + public/build, no bind mounts)
+        run: docker compose build app
+
+      - name: Build web image (nginx; consumes edupath-app:latest)
+        run: docker compose build web
+
+  publish:
+    name: Publish image to GHCR
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [ tests, docker ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute GHCR image name (lowercase)
+        run: echo "IMAGE_NAME=$(echo 'ghcr.io/${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build images
+        run: |
+          docker compose build app
+          docker compose build web
+
+      - name: Tag images (commit SHA + latest)
+        run: |
+          docker tag edupath-app "$IMAGE_NAME:${{ github.sha }}"
+          docker tag edupath-app "$IMAGE_NAME:latest"
+          docker tag edupath-web "$IMAGE_NAME-web:${{ github.sha }}"
+          docker tag edupath-web "$IMAGE_NAME-web:latest"
+
+      - name: Push images to GHCR
+        run: |
+          docker push "$IMAGE_NAME:${{ github.sha }}"
+          docker push "$IMAGE_NAME:latest"
+          docker push "$IMAGE_NAME-web:${{ github.sha }}"
+          docker push "$IMAGE_NAME-web:latest"

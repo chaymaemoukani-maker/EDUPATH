@@ -1,0 +1,21 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "app/Events",
+        "app/Http/Controllers",
+        "app/Http/Requests",
+        "app/Models",
+        "app/Policies",
+        "app/Services",
+        "app/View/Components",
+        "database/factories",
+        "database/migrations",
+        "database/seeders",
+        "tests/Feature"
+    ],
+    "notName": [
+        "app.php",
+        "laratrust.php",
+        "web.php"
+    ]
+}

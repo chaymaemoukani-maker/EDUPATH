@@ -7,27 +7,71 @@ services:
     container_name: edupath-app
     restart: unless-stopped
     working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
+    environment: &app_env
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_KEY: ${APP_KEY:-}
+      APP_URL: ${APP_URL:-http://localhost:8000}
+      APP_LOCALE: ${APP_LOCALE:-en}
+      DB_CONNECTION: ${DB_CONNECTION:-mysql}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_DATABASE: ${DB_DATABASE:-edupath}
+      DB_USERNAME: ${DB_USERNAME:-edupath_user}
+      DB_PASSWORD: ${DB_PASSWORD:-edupath_password}
+      SESSION_DRIVER: ${SESSION_DRIVER:-database}
+      SESSION_LIFETIME: ${SESSION_LIFETIME:-120}
+      CACHE_STORE: ${CACHE_STORE:-database}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-database}
+      LOG_CHANNEL: ${LOG_CHANNEL:-stack}
     networks:
       - edupath-network
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php", "artisan", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
   web:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    image: edupath-web
     container_name: edupath-web
     restart: unless-stopped
     ports:
       - "0.0.0.0:8000:80"
-    volumes:
-      - ./:/var/www/html
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     networks:
       - edupath-network
     depends_on:
-      - app
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  queue:
+    image: edupath-app
+    container_name: edupath-queue
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan queue:work database --tries=3
+    environment:
+      <<: *app_env
+    networks:
+      - edupath-network
+    depends_on:
+      app:
+        condition: service_healthy
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0

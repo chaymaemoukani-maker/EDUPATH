@@ -1,0 +1,40 @@
+# Version control & CI
+.git
+.github
+
+# Local environment (secrets — never baked into the image)
+.env
+.env.*
+!.env.example
+
+# Dependencies (rebuilt inside the image)
+vendor
+node_modules
+
+# Frontend build output (rebuilt inside the image)
+public/build
+
+# Runtime storage symlink (recreated inside the image;
+# a host reparse point breaks the build context)
+public/storage
+
+# Runtime / persistence (recreated & allowed at container start)
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/private/*
+storage/app/public/*
+bootstrap/cache/*.php
+
+# IDE / OS
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local database
+database/database.sqlite

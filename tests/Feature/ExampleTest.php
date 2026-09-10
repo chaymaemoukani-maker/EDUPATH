@@ -20,9 +20,9 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('EduPath');
-        $response->assertSee('Explorer le catalogue');
-        $response->assertSee('Créer un compte gratuit');
-        $response->assertSee('Comment ça marche');
+        $response->assertSee('Apprenez à votre rythme');
+        $response->assertSee('Voir les cours');
+        $response->assertSee('Créer un compte');
     }
 
     /**

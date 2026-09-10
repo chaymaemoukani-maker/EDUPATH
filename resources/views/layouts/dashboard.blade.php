@@ -11,7 +11,7 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -37,9 +37,9 @@
                 </svg>
             </button>
 
-            <a href="{{ url('/') }}" class="flex items-center">
-                <x-application-logo class="block h-9 w-auto fill-current text-indigo-600" />
-                <span class="ml-2 text-lg font-semibold text-slate-900">{{ config('app.name', 'EduPath') }}</span>
+            <a href="{{ url('/') }}" class="flex items-center gap-2">
+                <x-application-logo class="h-8 w-8" />
+                <span class="text-xl font-bold text-indigo-600">{{ config('app.name', 'EduPath') }}</span>
             </a>
 
             <div class="w-10"></div>
@@ -72,9 +72,9 @@
             >
                 <div class="flex h-full flex-col overflow-y-auto">
                     <div class="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                        <a href="{{ url('/') }}" class="flex items-center">
-                            <x-application-logo class="block h-8 w-auto fill-current text-indigo-600" />
-                            <span class="ml-2 text-base font-semibold text-slate-900">{{ config('app.name', 'EduPath') }}</span>
+                        <a href="{{ url('/') }}" class="flex items-center gap-2">
+                            <x-application-logo class="h-8 w-8" />
+                            <span class="text-xl font-bold text-indigo-600">{{ config('app.name', 'EduPath') }}</span>
                         </a>
                         <button
                             type="button"

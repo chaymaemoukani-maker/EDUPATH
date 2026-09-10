@@ -1,5 +1,5 @@
-<x-dashboard-layout>
-    <h1 class="text-2xl font-semibold text-slate-900">Mes certificats</h1>
+﻿<x-dashboard-layout>
+    <h1 class="text-3xl font-bold text-slate-900">Mes certificats</h1>
     <p class="mt-1 text-sm text-slate-500">Tous les certificats que vous avez obtenus en terminant vos cours.</p>
 
     @if (session('success'))

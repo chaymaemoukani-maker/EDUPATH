@@ -1,6 +1,6 @@
-<x-dashboard-layout>
+﻿<x-dashboard-layout>
     <div class="mb-8 flex items-center justify-between">
-        <h1 class="text-2xl font-semibold text-slate-900">Dashboard</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Dashboard</h1>
         <x-button href="{{ route('instructor.courses.create') }}" variant="primary" size="sm">
             Créer un cours
         </x-button>
@@ -34,7 +34,7 @@
 
     <div class="mt-10">
         <div class="mb-4 flex items-center justify-between">
-            <h2 class="text-lg font-semibold text-slate-900">Mes cours</h2>
+            <h2 class="text-2xl font-semibold text-slate-900">Mes cours</h2>
             <a href="{{ route('instructor.courses.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700">
                 Voir tous
             </a>

@@ -1,9 +1,9 @@
-<x-dashboard-layout>
+﻿<x-dashboard-layout>
     <a href="{{ route('learner.courses.index') }}" class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
         ← Mes cours
     </a>
 
-    <h1 class="mt-4 text-2xl font-semibold text-slate-900">{{ $course->title }}</h1>
+    <h1 class="mt-4 text-3xl font-bold text-slate-900">{{ $course->title }}</h1>
     <p class="mt-1 text-sm text-slate-500">
         {{ $course->instructor?->name ?? '—' }}
         &middot;
@@ -26,7 +26,7 @@
     @endif
 
     <div class="mt-8">
-        <h2 class="text-lg font-semibold text-slate-900">Programme du cours</h2>
+        <h2 class="text-2xl font-semibold text-slate-900">Programme du cours</h2>
 
         @foreach ($course->sections->sortBy('order') as $section)
             <div class="mt-6">

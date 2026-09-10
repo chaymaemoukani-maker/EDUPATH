@@ -1,6 +1,6 @@
-<x-dashboard-layout>
+﻿<x-dashboard-layout>
     <div class="mb-8 flex items-center justify-between">
-        <h1 class="text-2xl font-semibold text-slate-900">Mes cours</h1>
+        <h1 class="text-3xl font-bold text-slate-900">Mes cours</h1>
         <x-button href="{{ route('instructor.courses.create') }}" variant="primary">
             Créer un cours
         </x-button>

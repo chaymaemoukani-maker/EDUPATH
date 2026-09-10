@@ -1,9 +1,9 @@
-<x-dashboard-layout>
+﻿<x-dashboard-layout>
     <a href="{{ route('learner.modules.show', $quiz->module) }}" class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
         ← Retour au module
     </a>
 
-    <h1 class="mt-4 text-2xl font-semibold text-slate-900">{{ $quiz->title }}</h1>
+    <h1 class="mt-4 text-3xl font-bold text-slate-900">{{ $quiz->title }}</h1>
 
     <div class="mt-2 flex flex-wrap items-center gap-4 text-sm text-slate-500">
         <span>{{ $quiz->questions->count() }} questions</span>

@@ -14,7 +14,7 @@
         <title>{{ $code }} — {{ config('app.name', 'EduPath') }}</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
         @vite(['resources/css/app.css'])
     </head>
@@ -26,7 +26,7 @@
 
             <div class="text-center">
                 <p class="text-7xl font-bold text-indigo-600">{{ $code }}</p>
-                <h1 class="mt-4 text-2xl font-semibold tracking-tight text-slate-900">{{ $title }}</h1>
+                <h1 class="mt-4 text-3xl font-bold tracking-tight text-slate-900">{{ $title }}</h1>
                 <p class="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-500">{{ $message }}</p>
 
                 <div class="mt-8 flex flex-wrap items-center justify-center gap-3">

@@ -1,11 +1,11 @@
-<x-dashboard-layout>
+﻿<x-dashboard-layout>
     <a href="{{ route('learner.courses.show', $course) }}" class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-700">
         ← Retour au cours
     </a>
 
     <p class="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">{{ $module->section->title }}</p>
 
-    <h1 class="mt-1 text-2xl font-semibold text-slate-900">{{ $module->title }}</h1>
+    <h1 class="mt-1 text-3xl font-bold text-slate-900">{{ $module->title }}</h1>
     @php $typeLabels = ['text' => 'Texte', 'video' => 'Vidéo', 'pdf' => 'PDF']; @endphp
     <span class="mt-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">{{ $typeLabels[$module->type] ?? $module->type }}</span>
 
@@ -65,7 +65,7 @@
 
     @if ($quiz)
         <div class="mt-8 border-t border-slate-200 pt-8">
-            <h2 class="text-lg font-semibold text-slate-900">Quiz du module</h2>
+            <h2 class="text-2xl font-semibold text-slate-900">Quiz du module</h2>
             <p class="mt-1 text-sm text-slate-500">Passez le quiz pour valider vos connaissances.</p>
             <x-button href="{{ route('learner.quizzes.show', $quiz) }}" variant="primary" size="sm" class="mt-4">Commencer le quiz</x-button>
         </div>

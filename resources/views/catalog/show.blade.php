@@ -1,4 +1,4 @@
-<x-app-layout
+﻿<x-app-layout
     :page-title="$pageTitle ?? null"
     :meta-description="$metaDescription ?? null"
     :canonical="$canonical ?? null"
@@ -7,11 +7,11 @@
         <img src="{{ $course->image }}" alt="{{ $course->title }}" class="mb-6 aspect-video w-full rounded-xl object-cover" />
     @endif
 
-    <h1 class="text-2xl font-semibold text-slate-900">{{ $course->title }}</h1>
+    <h1 class="text-3xl font-bold text-slate-900">{{ $course->title }}</h1>
 
     <div class="mt-2 flex flex-wrap items-center gap-3">
         @if ($course->category)
-            <x-badge>{{ $course->category->name }}</x-badge>
+            <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">{{ $course->category->name }}</span>
         @endif
     </div>
 
@@ -46,7 +46,7 @@
                 </div>
             @endif
 
-            <h2 class="mt-8 text-lg font-semibold text-slate-900">Programme du cours</h2>
+            <h2 class="mt-8 text-2xl font-semibold text-slate-900">Programme du cours</h2>
 
             @php
                 $typeLabels = ['text' => 'Texte', 'video' => 'Vidéo', 'pdf' => 'PDF'];

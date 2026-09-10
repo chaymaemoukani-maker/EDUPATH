@@ -14,14 +14,12 @@
                 ['label' => 'Utilisateurs', 'url' => $url('admin.users.index'), 'route' => 'admin.users.index', 'icon' => 'users'],
                 ['label' => 'Catégories', 'url' => $url('admin.categories.index'), 'route' => 'admin.categories.index', 'icon' => 'category'],
                 ['label' => 'Cours', 'url' => $url('admin.courses.index'), 'route' => 'admin.courses.index', 'icon' => 'course'],
-                ['label' => 'Profil', 'url' => $url('profile.edit'), 'route' => 'profile.edit', 'icon' => 'profile'],
             ];
         } elseif (Auth::user()->hasRole('instructor')) {
             $roleItems = [
                 ['label' => 'Dashboard', 'url' => $url('instructor.dashboard'), 'route' => 'instructor.dashboard', 'icon' => 'dashboard'],
                 ['label' => 'Mes cours', 'url' => $url('instructor.courses.index'), 'route' => 'instructor.courses.index', 'icon' => 'course'],
                 ['label' => 'Apprenants', 'url' => $url('instructor.learners.index'), 'route' => 'instructor.learners.index', 'icon' => 'users'],
-                ['label' => 'Profil', 'url' => $url('profile.edit'), 'route' => 'profile.edit', 'icon' => 'profile'],
             ];
         } else {
             $roleItems = [
@@ -48,32 +46,18 @@
     ];
 @endphp
 
-<aside {{ $attributes->merge(['class' => ($responsive ? 'hidden md:flex ' : 'flex ').'w-64 shrink-0 flex-col border-r border-slate-200 bg-white']) }}>
-    <nav class="flex-1 space-y-1 px-3 py-6">
+<aside {{ $attributes->merge(['class' => ($responsive ? 'hidden md:flex ' : 'flex ').'w-60 shrink-0 flex-col border-r border-slate-200 bg-white']) }}>
+    <nav class="flex-1 space-y-0.5 p-3">
         @foreach ($items as $item)
             <a
                 href="{{ $item['url'] }}"
-                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition {{ $at($item) ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}"
+                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors {{ $at($item) ? 'bg-indigo-50 text-indigo-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }}"
             >
-                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <svg class="h-4 w-4 shrink-0 {{ $at($item) ? 'text-indigo-600' : 'text-slate-400' }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     {!! $icons[$item['icon'] ?? 'course'] ?? '' !!}
                 </svg>
                 {{ $item['label'] }}
             </a>
         @endforeach
     </nav>
-
-    @auth
-        <div class="border-t border-slate-100 p-3">
-            <div class="flex items-center gap-3 rounded-lg px-2 py-2">
-                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">
-                    {{ mb_strtoupper(mb_substr(Auth::user()->name, 0, 1)) }}
-                </span>
-                <div class="min-w-0">
-                    <p class="truncate text-sm font-medium text-slate-900">{{ Auth::user()->name }}</p>
-                    <p class="truncate text-xs text-slate-500">{{ Auth::user()->email }}</p>
-                </div>
-            </div>
-        </div>
-    @endauth
 </aside>

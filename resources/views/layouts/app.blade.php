@@ -17,7 +17,7 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -46,12 +46,18 @@
             </div>
         </main>
 
-        <footer class="border-t border-slate-200 bg-white">
-            <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-6 text-sm text-slate-500 sm:flex-row sm:px-6 lg:px-8">
-                <p>&copy; {{ date('Y') }} {{ config('app.name', 'EduPath') }} — Plateforme d'apprentissage en ligne.</p>
-                <a href="{{ \Illuminate\Support\Facades\Route::has('verify') ? route('verify') : '#' }}" class="font-medium hover:text-indigo-600">
-                    Vérifier un certificat
-                </a>
+        <footer class="border-t border-slate-200 bg-white py-6">
+            <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-sm text-slate-500 sm:flex-row sm:px-6 lg:px-8">
+                <p class="font-semibold text-indigo-600">{{ config('app.name', 'EduPath') }}</p>
+                <p>&copy; {{ date('Y') }} {{ config('app.name', 'EduPath') }} — Plateforme e-learning</p>
+                <div class="flex gap-4">
+                    @if (\Illuminate\Support\Facades\Route::has('catalog'))
+                        <a href="{{ route('catalog') }}" class="hover:text-slate-900">Catalogue</a>
+                    @endif
+                    @if (\Illuminate\Support\Facades\Route::has('verify'))
+                        <a href="{{ route('verify') }}" class="hover:text-slate-900">Vérifier un certificat</a>
+                    @endif
+                </div>
             </div>
         </footer>
     </body>

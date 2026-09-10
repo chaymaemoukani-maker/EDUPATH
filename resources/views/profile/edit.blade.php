@@ -1,29 +1,52 @@
-<x-app-layout>
+<x-dashboard-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <h2 class="text-2xl font-bold text-slate-900">Mon profil</h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+    @php
+        $initials = function (string $name): string {
+            $name = trim($name);
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+            $letters = '';
+            foreach (array_slice(preg_split('/\s+/', $name) ?: [], 0, 2) as $part) {
+                $letters .= mb_strtoupper(mb_substr($part, 0, 1));
+            }
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
+            return $letters !== '' ? $letters : '?';
+        };
+
+        $roleVariant = $user->hasRole('admin')
+            ? 'admin'
+            : ($user->hasRole('instructor') ? 'instructor' : 'learner');
+    @endphp
+
+    <div class="mx-auto max-w-3xl space-y-6">
+        <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="h-24 bg-gradient-to-r from-indigo-600 to-indigo-500"></div>
+            <div class="px-6 pb-6">
+                <div class="-mt-10 mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border-4 border-white bg-indigo-600 text-xl font-bold text-white shadow-sm">
+                    {{ $initials($user->name) }}
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">{{ $user->name }}</h3>
+                <p class="mt-0.5 text-sm text-slate-500">{{ $user->email }}</p>
+                <div class="mt-3">
+                    <x-badge :variant="$roleVariant" />
                 </div>
             </div>
         </div>
+
+        <div class="grid gap-6 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                @include('profile.partials.update-profile-information-form')
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                @include('profile.partials.update-password-form')
+            </div>
+        </div>
+
+        <div class="rounded-2xl border border-red-200 bg-white p-6 shadow-sm">
+            @include('profile.partials.delete-user-form')
+        </div>
     </div>
-</x-app-layout>
+</x-dashboard-layout>

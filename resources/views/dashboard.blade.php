@@ -1,5 +1,5 @@
-<x-dashboard-layout>
-    <h1 class="text-2xl font-semibold text-slate-900">Bonjour, {{ auth()->user()->name }}</h1>
+﻿<x-dashboard-layout>
+    <h1 class="text-3xl font-bold text-slate-900">Bonjour, {{ auth()->user()->name }}</h1>
     <p class="mt-1 text-sm text-slate-500">Voici un aperçu de votre activité d'apprentissage.</p>
 
     @if (session('success'))
@@ -29,7 +29,7 @@
     </div>
 
     <div class="mt-10">
-        <h2 class="text-lg font-semibold text-slate-900">Cours en cours</h2>
+        <h2 class="text-2xl font-semibold text-slate-900">Cours en cours</h2>
         <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($inProgress as $item)
                 <x-course-card :course="$item->course" :show-progress="true" :progress="$item->percent" :link-to="route('learner.courses.show', $item->course)" />
@@ -43,7 +43,7 @@
     </div>
 
     <div class="mt-10">
-        <h2 class="text-lg font-semibold text-slate-900">Cours terminés</h2>
+        <h2 class="text-2xl font-semibold text-slate-900">Cours terminés</h2>
         <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($completed as $item)
                 <x-course-card :course="$item->course" :show-progress="true" :progress="100" :link-to="route('learner.courses.show', $item->course)" />
@@ -56,7 +56,7 @@
     </div>
 
     <div class="mt-10">
-        <h2 class="text-lg font-semibold text-slate-900">Certificats</h2>
+        <h2 class="text-2xl font-semibold text-slate-900">Certificats</h2>
         <div class="mt-4">
             @if ($certificates->isNotEmpty())
                 @php $latest = $certificates->first(); @endphp

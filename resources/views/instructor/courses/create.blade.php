@@ -1,8 +1,8 @@
-<x-dashboard-layout>
+﻿<x-dashboard-layout>
     <div class="mb-8 flex items-center justify-between">
         <div class="flex items-center gap-4">
             <a href="{{ route('instructor.courses.index') }}" class="text-sm text-slate-500 hover:text-slate-700">&larr; Retour</a>
-            <h1 class="text-2xl font-semibold text-slate-900">Créer un cours</h1>
+            <h1 class="text-3xl font-bold text-slate-900">Créer un cours</h1>
         </div>
     </div>
 

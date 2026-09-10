@@ -59,6 +59,7 @@ class DemoDataSeeder extends Seeder
         $web = Category::where('slug', 'developpement-web')->first();
         $design = Category::where('slug', 'design-graphique')->first();
         $marketing = Category::where('slug', 'marketing-digital')->first();
+        $data = Category::where('slug', 'data-ia')->first();
 
         // ------------------------------------------------------------------
         // A) Instructor draft course (never published by its owner).
@@ -182,6 +183,51 @@ class DemoDataSeeder extends Seeder
         // The QuizAttempt against quizzes_id is satisfied by the module quiz.
         // ------------------------------------------------------------------
 
+        // ------------------------------------------------------------------
+        // G) Published courses matching the design reference cover images.
+        // ------------------------------------------------------------------
+        $this->course($karim, $web, 'Laravel pour débutants', 'published', [
+            $this->section('Démarrer', [
+                $this->module('Installer Laravel', 'text', "Installation de Laravel via Composer, premières routes et structure d'un projet."),
+                $this->module('Premier contrôleur', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+            ]),
+        ]);
+
+        $this->course($karim, $web, 'JavaScript moderne — ES6+', 'published', [
+            $this->section('Les bases', [
+                $this->module('Variables et types', 'text', "let, const, templates literals et typage dynamique pour manipuler les données."),
+                $this->module('Fonctions et flèches', 'text', "Fonctions fléchées, closures et méthodes de tableau pour un code moderne et concis."),
+            ]),
+        ]);
+
+        $this->course($sophie, $web, 'HTML & CSS — Les fondamentaux', 'published', [
+            $this->section('Structurer', [
+                $this->module('Balises sémantiques', 'text', "header, nav, main, section et footer : une structure claire et accessible."),
+                $this->module('Mise en page CSS', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+            ]),
+        ]);
+
+        $this->course($sophie, $data, 'MySQL pour débutants', 'published', [
+            $this->section('Modéliser', [
+                $this->module('Tables et clés', 'text', "Créer des tables, définir des clés primaires et étrangères pour modéliser des données relationnelles."),
+                $this->module('Requêtes SQL', 'text', "SELECT, INSERT, UPDATE et jointures pour interroger et maintenir vos données."),
+            ]),
+        ]);
+
+        $this->course($karim, $web, 'React.js — De zéro à héros', 'published', [
+            $this->section('Composants', [
+                $this->module('Créer un composant', 'text', "Composants, props et JSX : les briques de toute interface React."),
+                $this->module('État et effets', 'video', 'https://www.youtube.com/embed/dQw4w9WgXcQ'),
+            ]),
+        ]);
+
+        $this->course($sophie, $web, 'Tailwind CSS — Design rapide', 'published', [
+            $this->section('Les bases', [
+                $this->module('Classes utilitaires', 'text', "Styliser directement dans le markup avec les classes utilitaires de Tailwind."),
+                $this->module('Responsive et thème', 'text', "Variantes responsive, thème configurable et composants propres à l'aide de @apply."),
+            ]),
+        ]);
+
         $this->command?->info('DemoDataSeeder terminé (draft, published, enrollment, progression 50%, 100% + certificat, quiz complet).');
     }
 
@@ -203,22 +249,50 @@ class DemoDataSeeder extends Seeder
 
     private function course(User $instructor, Category $category, string $title, string $status, array $sections): Course
     {
+        $descriptions = [
+            'Introduction à PHP 8' => 'Découvrez le langage PHP 8 côté serveur : syntaxe, variables, conditions, fonctions et bonnes pratiques pour écrire du code maintenable.',
+            'Maîtriser Laravel 12' => 'Apprenez à construire des applications web professionnelles avec Laravel 12 : routing, contrôleurs, Eloquent, migrations, Blade et bien plus.',
+            'Design UX/UI : les fondamentaux' => 'Les bases du design d\'interface : couleurs et contraste, typographie, wireframes et tests utilisateurs pour créer des produits clairs et accessibles.',
+            'Marketing Digital 101' => 'Les fondamentaux du marketing digital : définition des personas, analyse de marché, SEO et stratégie de contenu pour développer votre activité en ligne.',
+            'Laravel pour débutants' => 'Construisez vos premières applications web avec Laravel : installation, routes, contrôleurs, Blade et Eloquent pas à pas.',
+            'JavaScript moderne — ES6+' => 'Maîtrisez les bases de JavaScript moderne : variables, fonctions, objets, promesses et syntaxe ES6+ pour des interfaces dynamiques.',
+            'HTML & CSS — Les fondamentaux' => 'Apprenez à structurer des pages avec HTML sémantique et à les styliser avec CSS : sélecteurs, flexbox et grid.',
+            'MySQL pour débutants' => 'Modélisez et interrogez des bases de données relationnelles avec MySQL : tables, clés, jointures et requêtes SQL.',
+            'React.js — De zéro à héros' => 'Créez des interfaces réactives avec React : composants, état, props, hooks et gestion des événements.',
+            'Tailwind CSS — Design rapide' => 'Gagnez du temps en stylisant vos interfaces avec Tailwind CSS : classes utilitaires, responsive design et composants propres.',
+        ];
+
+        $description = $descriptions[$title] ?? 'Apprenez l\'essentiel de cette thématique avec des modules pratiques et progressifs.';
+
         $course = Course::firstOrCreate(
             ['title' => $title],
             [
                 'instructor_id' => $instructor->id,
                 'category_id' => $category->id,
-                'description' => fake()->realTextBetween(120, 220),
                 'status' => $status,
-                'published_at' => $status === 'published' ? now() : null,
-                'image' => match ($title) {
-                    'Maîtriser Laravel 12' => '/images/courses/laravel.svg',
-                    'Design UX/UI : les fondamentaux' => '/images/courses/design-ux.svg',
-                    'Marketing Digital 101' => '/images/courses/marketing.svg',
-                    default => null,
-                },
+                'description' => $description,
             ]
         );
+
+        $course->update([
+            'instructor_id' => $instructor->id,
+            'category_id' => $category->id,
+            'description' => $description,
+            'status' => $status,
+            'published_at' => $status === 'published' ? $course->published_at ?? now() : null,
+            'image' => match ($title) {
+                'Laravel pour débutants' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=340&fit=crop&auto=format',
+                'JavaScript moderne — ES6+' => 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?w=600&h=340&fit=crop&auto=format',
+                'HTML & CSS — Les fondamentaux' => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=340&fit=crop&auto=format',
+                'MySQL pour débutants' => 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=340&fit=crop&auto=format',
+                'React.js — De zéro à héros' => 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop&auto=format',
+                'Tailwind CSS — Design rapide' => 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=600&h=340&fit=crop&auto=format',
+                'Maîtriser Laravel 12' => '/images/courses/laravel.svg',
+                'Design UX/UI : les fondamentaux' => '/images/courses/design-ux.svg',
+                'Marketing Digital 101' => '/images/courses/marketing.svg',
+                default => null,
+            },
+        ]);
 
         $course->sections()->delete();
 

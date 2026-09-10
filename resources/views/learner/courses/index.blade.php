@@ -1,5 +1,5 @@
-<x-dashboard-layout>
-    <h1 class="text-2xl font-semibold text-slate-900">Mes cours</h1>
+﻿<x-dashboard-layout>
+    <h1 class="text-3xl font-bold text-slate-900">Mes cours</h1>
     <p class="mt-1 text-sm text-slate-500">Retrouvez tous les cours auxquels vous êtes inscrit.</p>
 
     @if (session('success'))

@@ -1,4 +1,4 @@
-<x-app-layout
+﻿<x-app-layout
     :page-title="$pageTitle ?? null"
     :meta-description="$metaDescription ?? null"
     :canonical="$canonical ?? null"
@@ -7,7 +7,7 @@
         <x-alert type="success" class="mb-6">{{ session('success') }}</x-alert>
     @endif
 
-    <h1 class="text-2xl font-semibold text-slate-900">Tous les cours</h1>
+    <h1 class="text-3xl font-bold text-slate-900">Tous les cours</h1>
     <p class="mt-1 text-sm text-slate-500">Explorez notre catalogue et trouvez le cours qui vous correspond.</p>
 
     <form action="{{ route('catalog') }}" method="GET" class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end">
@@ -19,7 +19,7 @@
                 name="search"
                 value="{{ request('search') }}"
                 placeholder="Rechercher un cours…"
-                class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             />
         </div>
         <div class="sm:w-64">
@@ -27,7 +27,7 @@
             <select
                 id="category"
                 name="category"
-                class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
                 <option value="">Toutes les catégories</option>
                 @foreach ($categories as $category)

@@ -287,9 +287,9 @@ class DemoDataSeeder extends Seeder
                 'MySQL pour débutants' => 'https://images.unsplash.com/photo-1544383835-bda2bc66a55d?w=600&h=340&fit=crop&auto=format',
                 'React.js — De zéro à héros' => 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=340&fit=crop&auto=format',
                 'Tailwind CSS — Design rapide' => 'https://images.unsplash.com/photo-1587440871875-191322ee64b0?w=600&h=340&fit=crop&auto=format',
-                'Maîtriser Laravel 12' => '/images/courses/laravel.svg',
-                'Design UX/UI : les fondamentaux' => '/images/courses/design-ux.svg',
-                'Marketing Digital 101' => '/images/courses/marketing.svg',
+                'Maîtriser Laravel 12' => 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=600&h=340&fit=crop&auto=format',
+                'Design UX/UI : les fondamentaux' => 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=340&fit=crop&auto=format',
+                'Marketing Digital 101' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=340&fit=crop&auto=format',
                 default => null,
             },
         ]);

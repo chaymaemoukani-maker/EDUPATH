@@ -14,6 +14,7 @@ use App\Http\Controllers\Instructor\LearnerController as InstructorLearnerContro
 use App\Http\Controllers\Instructor\ModuleController;
 use App\Http\Controllers\Instructor\QuizController;
 use App\Http\Controllers\Instructor\SectionController;
+use App\Http\Controllers\Learner\AiAssistantController;
 use App\Http\Controllers\Learner\CertificateController as LearnerCertificateController;
 use App\Http\Controllers\Learner\CourseController as LearnerCourseController;
 use App\Http\Controllers\Learner\DashboardController as LearnerDashboardController;
@@ -110,6 +111,9 @@ Route::middleware(['auth', 'verified', 'role:learner'])->prefix('learner')->name
 
     Route::get('/certificates', [LearnerCertificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/{certificate}/download', [LearnerCertificateController::class, 'download'])->name('certificates.download');
+
+    Route::get('/ai-assistant', [AiAssistantController::class, 'index'])->name('ai-assistant.index');
+    Route::post('/ai-assistant', [AiAssistantController::class, 'ask'])->name('ai-assistant.ask');
 });
 
 require __DIR__.'/auth.php';

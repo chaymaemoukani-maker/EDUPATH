@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'groq' => [
+        'key' => env('GROQ_API_KEY'),
+        'model' => env('GROQ_MODEL', 'openai/gpt-oss-20b'),
+        'timeout' => env('GROQ_TIMEOUT', 30),
+        'base_url' => 'https://api.groq.com/openai/v1',
+    ],
+
 ];

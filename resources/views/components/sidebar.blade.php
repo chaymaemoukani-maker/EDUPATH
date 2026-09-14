@@ -25,6 +25,7 @@
             $roleItems = [
                 ['label' => 'Dashboard', 'url' => $url('learner.dashboard'), 'route' => 'learner.dashboard', 'icon' => 'dashboard'],
                 ['label' => 'Mes cours', 'url' => $url('learner.courses.index'), 'route' => 'learner.courses.index', 'icon' => 'course'],
+                ['label' => 'Assistant IA', 'url' => $url('learner.ai-assistant.index'), 'route' => 'learner.ai-assistant.index', 'icon' => 'ai'],
                 ['label' => 'Certificats', 'url' => $url('learner.certificates.index'), 'route' => 'learner.certificates.index', 'icon' => 'certificate'],
                 ['label' => 'Profil', 'url' => $url('profile.edit'), 'route' => 'profile.edit', 'icon' => 'profile'],
             ];
@@ -42,6 +43,7 @@
         'category' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402a3.75 3.75 0 001.097-2.653V6.75h-4.097a3.75 3.75 0 00-2.653 1.097L4.098 14.598a3.75 3.75 0 000 5.304zM16.5 4.5l4.313-1.313-1.313 4.313L18.75 8.25 21 10.5 15.75 15.75 13.5 13.5l3-3z"/>',
         'course' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>',
         'certificate' => '<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9"/>',
+        'ai' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z"/>',
         'profile' => '<path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>',
     ];
 @endphp

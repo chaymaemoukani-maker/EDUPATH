@@ -39,6 +39,7 @@
         $links = [
             ['label' => 'Dashboard', 'url' => $url('learner.dashboard'), 'route' => 'learner.dashboard'],
             ['label' => 'Mes cours', 'url' => $url('learner.courses.index'), 'route' => 'learner.courses.index'],
+            ['label' => 'Assistant IA', 'url' => $url('learner.ai-assistant.index'), 'route' => 'learner.ai-assistant.index'],
             ['label' => 'Catalogue', 'url' => $url('catalog'), 'route' => 'catalog'],
         ];
     }

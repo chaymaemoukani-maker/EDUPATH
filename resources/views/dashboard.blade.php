@@ -28,6 +28,18 @@
         </div>
     </div>
 
+    <div class="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-indigo-100 bg-indigo-50 p-6">
+        <div>
+            <h2 class="text-xl font-semibold text-slate-900">Assistant IA</h2>
+            <p class="mt-1 text-sm text-slate-600">
+                Posez vos questions sur vos cours en cours, simplifiez les concepts et préparez vos quiz.
+            </p>
+        </div>
+        <x-button href="{{ route('learner.ai-assistant.index') }}" variant="primary" size="md">
+            Ouvrir l’assistant
+        </x-button>
+    </div>
+
     <div class="mt-10">
         <h2 class="text-2xl font-semibold text-slate-900">Cours en cours</h2>
         <div class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

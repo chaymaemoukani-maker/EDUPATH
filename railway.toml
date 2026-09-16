@@ -1,0 +1,14 @@
+[build]
+# EduPath ships a non-standard-named Dockerfile for Railway; Railway does NOT
+# auto-detect "Dockerfile.railway" (only a root "Dockerfile" is detected).
+# Explicitly select the Docker builder and point it at the Railway image.
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile.railway"
+
+[deploy]
+# Laravel health endpoint configured in bootstrap/app.php
+# (withRouting health: '/up') — no auth, no middleware, works during
+# maintenance. Web service start command defaults to the Dockerfile CMD
+# (Nginx + PHP-FPM); the worker service overrides it with
+# `php artisan queue:work database --tries=3` in the dashboard.
+healthcheckPath = "/up"

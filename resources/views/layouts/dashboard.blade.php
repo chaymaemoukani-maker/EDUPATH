@@ -9,6 +9,10 @@
         @isset($metaDescription)<meta name="description" content="{{ $metaDescription }}">@endisset
         @isset($canonical)<link rel="canonical" href="{{ $canonical }}">@endisset
 
+        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=2">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}?v=2">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800&display=swap" rel="stylesheet" />

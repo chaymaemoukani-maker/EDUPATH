@@ -9,6 +9,10 @@
         @isset($metaDescription)<meta name="description" content="{{ $metaDescription }}">@endisset
         @isset($canonical)<link rel="canonical" href="{{ $canonical }}">@endisset
 
+        <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}?v=2">
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=2">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}?v=2">
+
         <meta property="og:site_name" content="{{ config('app.name', 'EduPath') }}">
         @isset($pageTitle)<meta property="og:title" content="{{ $pageTitle }} — {{ config('app.name', 'EduPath') }}">@endisset
         @isset($metaDescription)<meta property="og:description" content="{{ $metaDescription }}">@endisset
